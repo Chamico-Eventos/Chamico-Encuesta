@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Cómo estuvo el Evento? · El Chamico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0c0c0e;
+      --surface:  #141417;
+      --border:   rgba(255,255,255,0.08);
+      --ink:      #f0ece4;
+      --muted:    #888;
+      --accent:   #d4a843;
+      --accent2:  #e8c97a;
+      --danger:   #ff6b6b;
+      --radius:   16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(212,168,67,0.07) 0%, transparent 100%);
+    }
+    .header-inner { max-width: 560px; margin: 0 auto; }
+    .venue-tag {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(26px, 6vw, 38px);
+      font-weight: 800;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+    .header p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* PROGRESS */
+    .progress-wrap { max-width: 560px; margin: 0 auto; padding: 18px 24px 0; }
+    .progress-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    /* FORM */
+    .form-wrap { max-width: 560px; margin: 0 auto; padding: 28px 24px 0; }
+
+    .q-block { margin-bottom: 28px; }
+    .q-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .q-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(212,168,67,0.12);
+      border: 1px solid rgba(212,168,67,0.25);
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin-top: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .req-dot {
+      width: 5px; height: 5px;
+      background: var(--danger);
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 4px;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    /* PILLS */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 9px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pill:hover { border-color: rgba(212,168,67,0.4); color: var(--ink); }
+    .pill.sel {
+      background: rgba(212,168,67,0.15);
+      border-color: var(--accent);
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    /* STARS */
+    .star-group { display: flex; gap: 10px; }
+    .star {
+      font-size: 32px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.15);
+      transition: color 0.1s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .star:hover { transform: scale(1.15); }
+    .star.lit { color: var(--accent); }
+    .star-hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+    /* TEXTAREA */
+    .free-text {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .free-text:focus { border-color: rgba(212,168,67,0.5); }
+    .free-text::placeholder { color: var(--muted); }
+
+    /* DIVIDER */
+    .q-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    /* SUBMIT */
+    .submit-wrap { padding: 0 24px; max-width: 560px; margin: 8px auto 0; }
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0c0c0e;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.03em;
+    }
+    .submit-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .submit-btn:not(:disabled):active { transform: scale(0.98); }
+    .req-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+    /* THANK YOU */
+    .thanks {
+      display: none;
+      max-width: 560px;
+      margin: 60px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .thanks.show { display: block; }
+    .thanks-icon { font-size: 56px; margin-bottom: 16px; }
+    .thanks h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .thanks p { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+    .thanks-again {
+      padding: 12px 28px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .thanks-again:hover { border-color: var(--accent); color: var(--ink); }
+
+    /* ERROR */
+    .error-msg {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 8px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* SENDING OVERLAY */
+    .sending {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(12,12,14,0.85);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sending.show { display: flex; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(212,168,67,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .sending p { font-size: 14px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- SENDING OVERLAY -->
+  <div class="sending" id="sending">
+    <div class="spinner"></div>
+    <p>Guardando tu respuesta…</p>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <span class="venue-tag">El Chamico</span>
+      <h1 id="eventTitle">¿Cómo estuvo el Evento?</h1>
+      <p id="eventSubtitle">Encuesta rápida y anónima · 30 segundos</p>
+    </div>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0 de 14 respondidas</div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-wrap" id="formWrap">
+    <form id="surveyForm" novalidate>
+
+      <!-- Q1 Edad -->
+      <div class="q-block" id="qb-1">
+        <div class="q-label"><span class="q-num">1</span>¿En qué rango de edad estás?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q1">
+          <button type="button" class="pill" data-q="1" data-v="Menor de 18">Menor de 18</button>
+          <button type="button" class="pill" data-q="1" data-v="18–24">18–24</button>
+          <button type="button" class="pill" data-q="1" data-v="25–34">25–34</button>
+          <button type="button" class="pill" data-q="1" data-v="35–44">35–44</button>
+          <button type="button" class="pill" data-q="1" data-v="45–54">45–54</button>
+          <button type="button" class="pill" data-q="1" data-v="55+">55+</button>
+        </div>
+        <div class="error-msg" id="err-1">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q2 Género -->
+      <div class="q-block" id="qb-2">
+        <div class="q-label"><span class="q-num">2</span>¿Con qué género te identificás?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q2">
+          <button type="button" class="pill" data-q="2" data-v="Masculino">Masculino</button>
+          <button type="button" class="pill" data-q="2" data-v="Femenino">Femenino</button>
+          <button type="button" class="pill" data-q="2" data-v="No binario">No binario</button>
+          <button type="button" class="pill" data-q="2" data-v="Prefiero no decir">Prefiero no decir</button>
+        </div>
+        <div class="error-msg" id="err-2">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q3 Hora llegada -->
+      <div class="q-block" id="qb-3">
+        <div class="q-label"><span class="q-num">3</span>¿A qué hora llegaste al evento?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q3">
+          <button type="button" class="pill" data-q="3" data-v="Antes de las 20h">Antes de las 20h</button>
+          <button type="button" class="pill" data-q="3" data-v="20–21h">20–21h</button>
+          <button type="button" class="pill" data-q="3" data-v="21–22h">21–22h</button>
+          <button type="button" class="pill" data-q="3" data-v="22–23h">22–23h</button>
+          <button type="button" class="pill" data-q="3" data-v="Después de las 23h">Después de las 23h</button>
+        </div>
+        <div class="error-msg" id="err-3">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q4 Tiempo -->
+      <div class="q-block" id="qb-4">
+        <div class="q-label"><span class="q-num">4</span>¿Cuánto tiempo estuviste en el lugar?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q4">
+          <button type="button" class="pill" data-q="4" data-v="Menos de 1h">Menos de 1h</button>
+          <button type="button" class="pill" data-q="4" data-v="1–2h">1–2h</button>
+          <button type="button" class="pill" data-q="4" data-v="2–3h">2–3h</button>
+          <button type="button" class="pill" data-q="4" data-v="3–4h">3–4h</button>
+          <button type="button" class="pill" data-q="4" data-v="Más de 4h">Más de 4h</button>
+        </div>
+        <div class="error-msg" id="err-4">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q5 Banda -->
+      <div class="q-block" id="qb-5">
+        <div class="q-label"><span class="q-num">5</span>¿A qué banda viniste a ver?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q5">
+          <button type="button" class="pill" data-q="5" data-v="Chaco">Chaco</button>
+          <button type="button" class="pill" data-q="5" data-v="Banda invitada">Banda invitada</button>
+          <button type="button" class="pill" data-q="5" data-v="Ambas">Ambas</button>
+          <button type="button" class="pill" data-q="5" data-v="Solo la fiesta">Solo la fiesta</button>
+        </div>
+        <div class="error-msg" id="err-5">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q6 Instalaciones -->
+      <div class="q-block" id="qb-6">
+        <div class="q-label"><span class="q-num">6</span>¿Cómo calificarías las instalaciones del lugar?<span class="req-dot"></span></div>
+        <div class="star-group" id="q6" data-q="6">
+          <span class="star" data-v="1">★</span>
+          <span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span>
+          <span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+        <div class="star-hint" id="hint-6"></div>
+        <div class="error-msg" id="err-6">Por favor calificá con estrellas</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q7 Ambiente -->
+      <div class="q-block" id="qb-7">
+        <div class="q-label"><span class="q-num">7</span>¿Cómo calificarías el ambiente del evento?<span class="req-dot"></span></div>
+        <div class="star-group" id="q7" data-q="7">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+        </div>
+        <div class="star-hint" id="hint-7"></div>
+        <div class="error-msg" id="err-7">Por favor calificá con estrellas</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q8 Barra -->
+      <div class="q-block" id="qb-8">
+        <div class="q-label"><span class="q-num">8</span>¿Cómo calificarías la barra del lugar?<span class="req-dot"></span></div>
+        <div class="star-group" id="q8" data-q="8">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+        </div>
+        <div class="star-hint" id="hint-8"></div>
+        <div class="error-msg" id="err-8">Por favor calificá con estrellas</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q9 Sonido -->
+      <div class="q-block" id="qb-9">
+        <div class="q-label"><span class="q-num">9</span>¿Cómo calificarías el sistema de sonido?<span class="req-dot"></span></div>
+        <div class="star-group" id="q9" data-q="9">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+        </div>
+        <div class="star-hint" id="hint-9"></div>
+        <div class="error-msg" id="err-9">Por favor calificá con estrellas</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q10 Limpieza -->
+      <div class="q-block" id="qb-10">
+        <div class="q-label"><span class="q-num">10</span>¿Cómo calificarías la limpieza del lugar?<span class="req-dot"></span></div>
+        <div class="star-group" id="q10" data-q="10">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+        </div>
+        <div class="star-hint" id="hint-10"></div>
+        <div class="error-msg" id="err-10">Por favor calificá con estrellas</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q11 Volvería -->
+      <div class="q-block" id="qb-11">
+        <div class="q-label"><span class="q-num">11</span>¿Volverías a algún otro evento en el Chamico?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q11">
+          <button type="button" class="pill" data-q="11" data-v="Sí">Sí</button>
+          <button type="button" class="pill" data-q="11" data-v="Tal vez">Tal vez</button>
+          <button type="button" class="pill" data-q="11" data-v="Ni en Pedo">Ni en Pedo</button>
+        </div>
+        <div class="error-msg" id="err-11">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q12 Ya vino -->
+      <div class="q-block" id="qb-12">
+        <div class="q-label"><span class="q-num">12</span>¿Ya habías venido a un evento nuestro antes?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q12">
+          <button type="button" class="pill" data-q="12" data-v="Sí, varias veces">Sí, varias veces</button>
+          <button type="button" class="pill" data-q="12" data-v="Sí, una vez">Sí, una vez</button>
+          <button type="button" class="pill" data-q="12" data-v="No, es mi primera vez">No, es mi primera vez</button>
+        </div>
+        <div class="error-msg" id="err-12">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q13 Cómo se enteró -->
+      <div class="q-block" id="qb-13">
+        <div class="q-label"><span class="q-num">13</span>¿Cómo te enteraste del evento?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q13">
+          <button type="button" class="pill" data-q="13" data-v="Un amigo">Un amigo</button>
+          <button type="button" class="pill" data-q="13" data-v="Flyer / cartel">Flyer / cartel</button>
+          <button type="button" class="pill" data-q="13" data-v="Instagram">Instagram</button>
+          <button type="button" class="pill" data-q="13" data-v="Facebook">Facebook</button>
+          <button type="button" class="pill" data-q="13" data-v="Wassap">Wassap</button>
+        </div>
+        <div class="error-msg" id="err-13">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q14 Recomendaría -->
+      <div class="q-block" id="qb-14">
+        <div class="q-label"><span class="q-num">14</span>¿Lo recomendarías a un amigo?<span class="req-dot"></span></div>
+        <div class="pill-group" id="q14">
+          <button type="button" class="pill" data-q="14" data-v="Sí, sin dudarlo">Sí, sin dudarlo</button>
+          <button type="button" class="pill" data-q="14" data-v="Probablemente sí">Probablemente sí</button>
+          <button type="button" class="pill" data-q="14" data-v="No sé">No sé</button>
+          <button type="button" class="pill" data-q="14" data-v="No">No</button>
+        </div>
+        <div class="error-msg" id="err-14">Por favor elegí una opción</div>
+      </div>
+      <div class="q-divider"></div>
+
+      <!-- Q15 Comentario -->
+      <div class="q-block" id="qb-15">
+        <div class="q-label"><span class="q-num">15</span>¿Algún comentario adicional?</div>
+        <textarea class="free-text" id="q15" placeholder="Tu respuesta… (opcional)" rows="4"></textarea>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap" id="submitWrap">
+    <button class="submit-btn" id="submitBtn" disabled>Completá las preguntas obligatorias</button>
+    <p class="req-note">● Las preguntas con punto rojo son obligatorias</p>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="thanks" id="thanks">
+    <div class="thanks-icon">🎉</div>
+    <h2>¡Gracias!</h2>
+    <p>Tu respuesta fue registrada.<br>Nos ayuda a mejorar cada evento.</p>
+    <button class="thanks-again" id="thanksAgain">Registrar otra respuesta</button>
+  </div>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────
+    // Reemplazá esta URL con la de tu Google Apps Script después de deployar
+    const SHEET_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+    // ────────────────────────────────────────────────────────────────
+
+    const REQUIRED = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+    const STAR_HINTS = ['','Muy malo','Malo','Regular','Bueno','Excelente'];
+    const answers = {};
+
+    // PILLS
+    document.querySelectorAll('.pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const q = btn.dataset.q;
+        document.querySelectorAll(`.pill[data-q="${q}"]`).forEach(b => b.classList.remove('sel'));
+        btn.classList.add('sel');
+        answers[q] = btn.dataset.v;
+        document.getElementById(`err-${q}`).classList.remove('show');
+        updateProgress();
+      });
+    });
+
+    // STARS
+    document.querySelectorAll('.star-group').forEach(group => {
+      const q = group.dataset.q;
+      const stars = group.querySelectorAll('.star');
+      stars.forEach(star => {
+        star.addEventListener('mouseenter', () => {
+          const v = parseInt(star.dataset.v);
+          stars.forEach((s,i) => s.classList.toggle('lit', i < v));
+          document.getElementById(`hint-${q}`).textContent = STAR_HINTS[v];
+        });
+        star.addEventListener('mouseleave', () => {
+          const sel = answers[q] ? parseInt(answers[q]) : 0;
+          stars.forEach((s,i) => s.classList.toggle('lit', i < sel));
+          document.getElementById(`hint-${q}`).textContent = sel ? STAR_HINTS[sel] : '';
+        });
+        star.addEventListener('click', () => {
+          const v = star.dataset.v;
+          answers[q] = v;
+          const vi = parseInt(v);
+          stars.forEach((s,i) => s.classList.toggle('lit', i < vi));
+          document.getElementById(`hint-${q}`).textContent = STAR_HINTS[vi];
+          document.getElementById(`err-${q}`).classList.remove('show');
+          updateProgress();
+        });
+      });
+    });
+
+    // PROGRESS
+    function updateProgress() {
+      const done = REQUIRED.filter(q => answers[String(q)]).length;
+      const pct = Math.round((done / REQUIRED.length) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = `${done} de ${REQUIRED.length} respondidas`;
+      const allDone = REQUIRED.every(q => answers[String(q)]);
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = !allDone;
+      btn.textContent = allDone ? 'Enviar encuesta →' : 'Completá las preguntas obligatorias';
+    }
+
+    // SUBMIT
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      // Validate
+      let valid = true;
+      REQUIRED.forEach(q => {
+        if (!answers[String(q)]) {
+          document.getElementById(`err-${q}`).classList.add('show');
+          valid = false;
+        }
+      });
+      if (!valid) return;
+
+      const payload = {
+        timestamp: new Date().toLocaleString('es-AR'),
+        edad: answers['1'] || '',
+        genero: answers['2'] || '',
+        horaLlegada: answers['3'] || '',
+        tiempoEnLugar: answers['4'] || '',
+        banda: answers['5'] || '',
+        instalaciones: answers['6'] || '',
+        ambiente: answers['7'] || '',
+        barra: answers['8'] || '',
+        sonido: answers['9'] || '',
+        limpieza: answers['10'] || '',
+        volveria: answers['11'] || '',
+        yaVino: answers['12'] || '',
+        comoSeEntero: answers['13'] || '',
+        recomendaria: answers['14'] || '',
+        comentario: document.getElementById('q15').value || ''
+      };
+
+      document.getElementById('sending').classList.add('show');
+
+      try {
+        if (SHEET_URL && SHEET_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+          await fetch(SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          // Demo mode: just wait a moment
+          await new Promise(r => setTimeout(r, 800));
+          console.log('Demo mode — respuesta:', payload);
+        }
+      } catch(e) {
+        console.error('Error enviando:', e);
+      }
+
+      document.getElementById('sending').classList.remove('show');
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('submitWrap').style.display = 'none';
+      document.getElementById('thanks').classList.add('show');
+      document.querySelector('.progress-wrap').style.display = 'none';
+    });
+
+    // RESET
+    document.getElementById('thanksAgain').addEventListener('click', () => {
+      Object.keys(answers).forEach(k => delete answers[k]);
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('sel'));
+      document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+      document.querySelectorAll('.star-hint').forEach(h => h.textContent = '');
+      document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+      document.getElementById('q15').value = '';
+      document.getElementById('formWrap').style.display = '';
+      document.getElementById('submitWrap').style.display = '';
+      document.getElementById('thanks').classList.remove('show');
+      document.querySelector('.progress-wrap').style.display = '';
+      updateProgress();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
