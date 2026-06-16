@@ -611,6 +611,7 @@
     // ── CONFIG — CAMBIÁ ESTO ANTES DE CADA EVENTO ───────────────────
     const SHEET_URL  = 'https://script.google.com/macros/s/AKfycbzS8XhT_SHvkWmBhjaK5ORmI406wVtj-s0Ppw0QoMQfT0e2YU16aElS1EDpc2t1eMAZ_A/exec';
     const EVENT_NAME = 'Chackustics en el Chamico 6-6-2026';
+    const VENUE_NAME = 'Galpón Chamico';
     // ────────────────────────────────────────────────────────────────
 
     const REQUIRED   = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
@@ -675,6 +676,7 @@
       const payload = {
         timestamp:     new Date().toLocaleString('es-AR'),
         evento:        EVENT_NAME,
+        venue:         VENUE_NAME,
         edad:          answers['1']  || '',
         genero:        answers['2']  || '',
         horaLlegada:   answers['3']  || '',
@@ -722,4 +724,5 @@
   </script>
 </body>
 </html>
+
 
